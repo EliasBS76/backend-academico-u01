@@ -11,9 +11,13 @@ Compilada con **JDK 25** y destino **Java 21**, sobre **Spring Boot 4.1.0**.
 
 | Lo solicitado | Dónde está |
 |---|---|
+| **Documento de entrega** | [`ENTREGA-U01.md`](ENTREGA-U01.md) — todo en un solo archivo |
 | **Código y solución** | Este repositorio, rama `main` |
 | **Evidencia de ejecución** | [`EVIDENCIAS.md`](EVIDENCIAS.md) |
 | **Reto** | [`RETO.md`](../../blob/reto/u01-puerto-8081/RETO.md) — en la rama `reto/u01-puerto-8081` |
+
+> Si solo vas a leer un archivo, lee [`ENTREGA-U01.md`](ENTREGA-U01.md): es
+> autocontenido e incluye el código fuente, la evidencia y el reto.
 
 > **El reto está en una rama aparte**, como pide el manual de la unidad.
 > Para verlo, cambia a la rama `reto/u01-puerto-8081` con el selector de ramas,
