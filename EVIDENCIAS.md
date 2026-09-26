@@ -160,8 +160,8 @@ Ninguna de las dos vías modificó un archivo `.java`.
 SHA256 de `target\classes\mx\edu\backendacademico\BackendAcademicoApplication.class`:
 
 ```
-ANTES   (tras ejecutar en 8080): 6E9C6C0618F6C53168519DCC9314E92419F993E592923966E13568EDD1C3F8C2
-DESPUÉS (tras ejecutar en 8081): 6E9C6C0618F6C53168519DCC9314E92419F993E592923966E13568EDD1C3F8C2
+ANTES   (tras ejecutar en 8080): 5711D44B8D009F4EDF79FD8A1DB3AF3632654B9D0B3AC516D50AAE547593C671
+DESPUÉS (tras ejecutar en 8081): 5711D44B8D009F4EDF79FD8A1DB3AF3632654B9D0B3AC516D50AAE547593C671
 ```
 
 Hash idéntico: el mismo bytecode, byte por byte, sirvió en 8080 y en 8081.
