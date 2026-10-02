@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class SaludoController {
     @GetMapping("/saludo")
     public Map<String, String> saludar(@RequestParam(defaultValue = "Mundo") String nombre) {
-        return Map.of("mensaje", "Hola " + nombre);
+        return Map.of(
+                "mensaje", "Hola " + nombre,
+                "alumno", "Elias Bernal Solis");
     }
 }
