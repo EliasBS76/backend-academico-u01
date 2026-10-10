@@ -23,4 +23,8 @@ public record Alumno(Long id, String matricula, String nombre, String correo,
     public Alumno darDeBaja() {
         return new Alumno(id, matricula, nombre, correo, EstatusAlumno.BAJA);
     }
+
+    public Alumno reactivar() {
+        return new Alumno(id, matricula, nombre, correo, EstatusAlumno.ACTIVO);
+    }
 }
