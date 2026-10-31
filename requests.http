@@ -21,6 +21,39 @@ Content-Type: application/json
 ### Eliminar alumno: 204
 DELETE {{baseUrl}}/alumnos/1
 
+### Body inválido: 400 con campos
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+
+{"matricula":"","nombre":"A","correo":"no-es-correo"}
+
+### Matrícula duplicada: ejecutar dos veces para obtener 409
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+
+{"matricula":"A001","nombre":"Otra persona","correo":"otra@universidad.mx"}
+
+### Alumno inexistente: 404
+GET {{baseUrl}}/alumnos/9999
+
+### JSON incompleto: 400 por lectura del mensaje
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+
+{"matricula":"A001"
+
+### Reto U06 - matrícula con espacio interno: 400, codigo=DATOS_INVALIDOS, campo matricula
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+
+{"matricula":"A 001","nombre":"Ada Lovelace","correo":"ada@universidad.mx"}
+
+### Reto U06 - matrícula con espacios solo en los extremos: 201 (el dominio la normaliza)
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+
+{"matricula":"  A002  ","nombre":"Grace Hopper","correo":"grace@universidad.mx"}
+
 ### Reto U05 - 1. Listar sin filtro: 200, todos los alumnos (mismo contrato anterior)
 GET {{baseUrl}}/alumnos
 

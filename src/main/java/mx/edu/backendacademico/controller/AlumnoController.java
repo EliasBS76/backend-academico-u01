@@ -2,6 +2,7 @@ package mx.edu.backendacademico.controller;
 
 // Traduce HTTP a llamadas de aplicación y construye respuestas mediante DTO.
 
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import mx.edu.backendacademico.domain.EstatusAlumno;
@@ -29,7 +30,7 @@ public class AlumnoController {
     public AlumnoController(AlumnoService service) { this.service = service; }
 
     // GET consulta sin solicitar cambios de estado de negocio.
-    // Reto U05: el filtro de estatus es opcional; sin el parámetro se conserva el contrato anterior.
+    // Reto U05 (se conserva): el filtro de estatus es opcional; sin el parámetro se mantiene el contrato anterior.
     @GetMapping
     public List<AlumnoResponse> listar(@RequestParam(name = "estatus", required = false) EstatusAlumno estatus) {
         return service.listar().stream()
@@ -42,10 +43,9 @@ public class AlumnoController {
     @GetMapping("/{id}")
     public AlumnoResponse buscar(@PathVariable Long id) { return AlumnoMapper.toResponse(service.buscar(id)); }
 
-    // POST crea una identidad; ResponseEntity publica 201 y Location.
+    // El servicio asigna identidad; ResponseEntity publica 201 y Location.
     @PostMapping
-    public ResponseEntity<AlumnoResponse> crear(@RequestBody CrearAlumnoRequest request) {
-        // El id se obtiene de la creación, nunca del cuerpo enviado por el cliente.
+    public ResponseEntity<AlumnoResponse> crear(@RequestBody @Valid CrearAlumnoRequest request) {
         var creado = service.crear(request.matricula(), request.nombre(), request.correo());
         return ResponseEntity.created(URI.create("/api/v1/alumnos/" + creado.id()))
                 .body(AlumnoMapper.toResponse(creado));
@@ -53,7 +53,7 @@ public class AlumnoController {
 
     // PUT sustituye todos los campos de la representación editable.
     @PutMapping("/{id}")
-    public AlumnoResponse actualizar(@PathVariable Long id, @RequestBody ActualizarAlumnoRequest request) {
+    public AlumnoResponse actualizar(@PathVariable Long id, @RequestBody @Valid ActualizarAlumnoRequest request) {
         return AlumnoMapper.toResponse(service.actualizar(id, request.nombre(), request.correo()));
     }
 
