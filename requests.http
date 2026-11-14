@@ -33,32 +33,8 @@ Content-Type: application/json
 
 {"matricula":"A001","nombre":"Otra persona","correo":"otra@universidad.mx"}
 
-### Alumno inexistente: 404
-GET {{baseUrl}}/alumnos/9999
+### U08: crea primero un alumno y sustituye alumnoId por su id real
+POST http://localhost:8080/api/v1/inscripciones?alumnoId=1&materiaId=1
 
-### JSON incompleto: 400 por lectura del mensaje
-POST {{baseUrl}}/alumnos
-Content-Type: application/json
-
-{"matricula":"A001"
-
-### Reto U06 - matrícula con espacio interno: 400, codigo=DATOS_INVALIDOS, campo matricula
-POST {{baseUrl}}/alumnos
-Content-Type: application/json
-
-{"matricula":"A 001","nombre":"Ada Lovelace","correo":"ada@universidad.mx"}
-
-### Reto U06 - matrícula con espacios solo en los extremos: 201 (el dominio la normaliza)
-POST {{baseUrl}}/alumnos
-Content-Type: application/json
-
-{"matricula":"  A002  ","nombre":"Grace Hopper","correo":"grace@universidad.mx"}
-
-### Reto U05 - 1. Listar sin filtro: 200, todos los alumnos (mismo contrato anterior)
-GET {{baseUrl}}/alumnos
-
-### Reto U05 - 2. Filtrar por ACTIVO: 200, solo alumnos con estatus ACTIVO
-GET {{baseUrl}}/alumnos?estatus=ACTIVO
-
-### Reto U05 - 3. Filtrar por BAJA: 200, solo alumnos con estatus BAJA (lista vacia si no hay ninguno)
-GET {{baseUrl}}/alumnos?estatus=BAJA
+### Historial paginado con orden estable
+GET http://localhost:8080/api/v1/inscripciones/alumno/1?page=0&size=5&sort=fecha
