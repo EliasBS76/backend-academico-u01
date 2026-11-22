@@ -25,6 +25,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problema(HttpStatus.CONFLICT, "MATRICULA_DUPLICADA", ex.getMessage());
     }
 
+    // Reto U10: rechazo de la regla por objeto (distinto del 403 de los filtros de seguridad).
+    @ExceptionHandler(AccesoDenegadoException.class)
+    ProblemDetail accesoDenegado(AccesoDenegadoException ex) {
+        return problema(HttpStatus.FORBIDDEN, "ACCESO_DENEGADO", ex.getMessage());
+    }
+
+    @ExceptionHandler(ExpedienteNoAsociadoException.class)
+    ProblemDetail sinExpediente(ExpedienteNoAsociadoException ex) {
+        return problema(HttpStatus.NOT_FOUND, "EXPEDIENTE_NO_ASOCIADO", ex.getMessage());
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers,

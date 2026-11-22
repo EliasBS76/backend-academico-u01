@@ -10,5 +10,6 @@ public interface AlumnoRepository {
     List<Alumno> buscarTodos();
     Optional<Alumno> buscarPorId(Long id);
     boolean existePorMatricula(String matricula);
+    Optional<Alumno> buscarPorMatricula(String matricula);
     void eliminarPorId(Long id);
 }
