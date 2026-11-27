@@ -21,6 +21,9 @@ public class SecurityConfig {
         // 2. La primera regla coincidente determina el acceso.
         http.authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/v1/saludo", "/openapi.yaml", "/error").permitAll()
+            // U12: salud pública (sin detalles); el resto de Actuator sólo para ADMIN.
+            .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+            .requestMatchers("/actuator/**").hasRole("ADMIN")
             .requestMatchers("/api/v1/csrf").authenticated()
             .requestMatchers(HttpMethod.GET, "/api/v1/alumnos/**").hasAnyRole("ALUMNO", "DOCENTE", "ADMIN")
             // Reto U10: la ruta sólo exige identidad; la regla por objeto la aplica ExpedienteService.

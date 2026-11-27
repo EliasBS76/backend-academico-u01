@@ -80,3 +80,20 @@ Idempotency-Key: 7f1c2b0e-reto-u11-0001
 Content-Type: application/json
 
 {"matricula":"A901","nombre":"Grace Hopper","correo":"grace@u.mx"}
+
+### U12: salud pública sin detalles internos
+GET http://localhost:8080/actuator/health
+
+### U12: readiness comprueba también PostgreSQL
+GET http://localhost:8080/actuator/health/readiness
+
+### U12: liveness no depende de la base
+GET http://localhost:8080/actuator/health/liveness
+
+### U12: métricas reservadas a ADMIN
+GET http://localhost:8080/actuator/metrics
+Authorization: Basic admin admin123
+
+### U12: contador de la tarea programada (aparece después del primer minuto)
+GET http://localhost:8080/actuator/metrics/academico.resumen.ejecuciones
+Authorization: Basic admin admin123

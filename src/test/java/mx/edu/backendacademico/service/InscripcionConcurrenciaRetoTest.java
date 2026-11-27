@@ -28,15 +28,32 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 /**
  * Reto U08: admisiones simultáneas sobre una materia con UN solo lugar.
- * Requiere PostgreSQL real (docker compose up -d); no usa H2 ni perfil de prueba,
+ * Requiere PostgreSQL real; no usa H2 ni perfil de prueba,
  * porque la evidencia se toma de pg_stat_activity / pg_blocking_pids.
+ * U12: desde que Compose deja de publicar PostgreSQL al anfitrión, la base la levanta
+ * Testcontainers; así la prueba sólo necesita Docker encendido y no una base compartida.
  * La clase NO es @Transactional: cada hilo debe confirmar su propia transacción.
  */
 @SpringBootTest
+@Testcontainers
 class InscripcionConcurrenciaRetoTest {
+    @Container
+    static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:17-alpine");
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
 
     @Autowired InscripcionService servicio;          // bean real (pasa por el proxy @Transactional)
     @Autowired MateriaRepository materias;
