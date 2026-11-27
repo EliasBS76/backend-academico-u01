@@ -35,6 +35,14 @@ function Invoke-Peticion {
     [pscustomobject]@{ Status = [int]$codigo; Cuerpo = $cuerpo }
 }
 
+# Docker escribe su progreso en stderr; en Windows PowerShell 5.1 eso cuenta como error con
+# $ErrorActionPreference = "Stop". Pasar por cmd /c evita que se interprete así.
+function Invoke-Compose {
+    param([string]$Argumentos)
+    & cmd /c "docker compose $Argumentos >nul 2>&1"
+    "   (docker compose $Argumentos)"
+}
+
 function Test-Caso {
     param([string]$Nombre, [int]$Esperado, $Respuesta)
     $ok = $Respuesta.Status -eq $Esperado
@@ -68,8 +76,7 @@ if (-not (Wait-Readiness)) { throw "La aplicación no llegó a readiness UP" }
 if ($Falla) {
     "== Falla controlada de PostgreSQL"
     Test-Caso "readiness antes de la falla" 200 (Invoke-Peticion GET "/actuator/health/readiness")
-    docker compose stop postgres | Out-Null
-    "   (docker compose stop postgres)"
+    Invoke-Compose "stop postgres"
     Test-Caso "readiness con PostgreSQL detenido" 503 (Invoke-Peticion GET "/actuator/health/readiness")
     Test-Caso "liveness con PostgreSQL detenido" 200 (Invoke-Peticion GET "/actuator/health/liveness")
     Test-Caso "health general con PostgreSQL detenido" 503 (Invoke-Peticion GET "/actuator/health")
@@ -78,8 +85,7 @@ if ($Falla) {
     $api = Invoke-Peticion GET "/api/v1/expediente" "alumno" "alumno123"
     $ms = [int]((Get-Date) - $inicio).TotalMilliseconds
     Test-Caso "API que necesita la base ($ms ms)" 500 $api
-    docker compose start postgres | Out-Null
-    "   (docker compose start postgres)"
+    Invoke-Compose "start postgres"
     if (Wait-Readiness 60) { Test-Caso "readiness al volver PostgreSQL" 200 (Invoke-Peticion GET "/actuator/health/readiness") }
     else { "FALLA readiness no volvió a UP"; $script:fallas++ }
 }
@@ -87,8 +93,7 @@ elseif ($Persistencia) {
     "== Persistencia tras reiniciar el contenedor app"
     $antes = Invoke-Peticion GET "/api/v1/expediente" "alumno" "alumno123"
     Test-Caso "expediente A001 antes de reiniciar" 200 $antes
-    docker compose restart app | Out-Null
-    "   (docker compose restart app)"
+    Invoke-Compose "restart app"
     if (-not (Wait-Readiness)) { throw "La aplicación no volvió después del reinicio" }
     $despues = Invoke-Peticion GET "/api/v1/expediente" "alumno" "alumno123"
     Test-Caso "expediente A001 después de reiniciar" 200 $despues
