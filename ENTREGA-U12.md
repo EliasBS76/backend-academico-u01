@@ -21,9 +21,8 @@ docker info --format "{{.ServerVersion}}"
 ## 2. Obtener el código en una carpeta limpia
 
 ```powershell
-git clone <url-del-repositorio> backend-academico
+git clone https://github.com/EliasBS76/backend-academico-u01.git backend-academico
 cd backend-academico
-git checkout reto/u12-entrega
 ```
 
 ## 3. Construcción y pruebas
