@@ -4,11 +4,13 @@ import java.net.URI;
 import java.util.Map;
 import mx.edu.backendacademico.dto.InscripcionResponse;
 import mx.edu.backendacademico.dto.PaginaResponse;
+import mx.edu.backendacademico.service.ExpedienteService;
 import mx.edu.backendacademico.service.InscripcionService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,8 +18,12 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/v1/inscripciones")
 public class InscripcionController {
     private final InscripcionService service;
+    private final ExpedienteService expedientes;
 
-    public InscripcionController(InscripcionService service) { this.service = service; }
+    public InscripcionController(InscripcionService service, ExpedienteService expedientes) {
+        this.service = service;
+        this.expedientes = expedientes;
+    }
 
     @PostMapping
     public ResponseEntity<Map<String, Long>> inscribir(@RequestParam Long alumnoId,
@@ -34,12 +40,17 @@ public class InscripcionController {
     public PaginaResponse<InscripcionResponse> historial(@PathVariable Long alumnoId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "id") String sort) {
+            @RequestParam(defaultValue = "id") String sort,
+            Authentication auth) {
         // Lista blanca de campos y límites explícitos para memoria y consultas.
         if (alumnoId <= 0 || page < 0 || size < 1 || size > 50 ||
                 !(sort.equals("id") || sort.equals("fecha"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paginación o identificador inválido");
         }
+        // Reto U12: un ALUMNO sólo ve su propio historial; DOCENTE y ADMIN ven cualquiera.
+        boolean esPersonal = auth.getAuthorities().stream().map(a -> a.getAuthority())
+                .anyMatch(r -> r.equals("ROLE_DOCENTE") || r.equals("ROLE_ADMIN"));
+        expedientes.exigirAccesoAlHistorial(alumnoId, auth.getName(), esPersonal);
         Sort orden = Sort.by(sort);
         if (!sort.equals("id")) orden = orden.and(Sort.by("id"));
         return service.historial(alumnoId, PageRequest.of(page, size, orden));

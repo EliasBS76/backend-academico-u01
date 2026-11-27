@@ -45,4 +45,17 @@ public class ExpedienteService {
                 .filter(alumno -> alumno.matricula().equalsIgnoreCase(propia))
                 .orElseThrow(AccesoDenegadoException::new);
     }
+
+    /**
+     * Reto U12 — mejora de acceso por propietario en el historial de inscripciones.
+     *   permitir(principal, LEER, historial(alumnoId)) = principal es DOCENTE o ADMIN
+     *                                                    o alumnoId es su propio expediente
+     * Reutiliza la misma regla de consultar(): para un ALUMNO, "no existe" y "no es tuyo"
+     * responden igual (403). La comprobación vive FUERA de cualquier método con caché,
+     * porque la caché de alumnos usa sólo el id como clave y no conoce al solicitante.
+     */
+    public void exigirAccesoAlHistorial(Long alumnoId, String usuario, boolean esPersonal) {
+        if (esPersonal) return;
+        consultar(alumnoId, usuario, false);
+    }
 }

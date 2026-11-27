@@ -165,6 +165,9 @@ paths:
   /api/v1/inscripciones/alumno/{alumnoId}:
     get:
       summary: Obtiene el historial paginado de un alumno
+      description: >-
+        DOCENTE y ADMIN consultan cualquier historial. Reto U12: un ALUMNO sólo consulta el suyo;
+        para un id ajeno o inexistente recibe 403 ACCESO_DENEGADO (no se distingue para no revelar ids).
       parameters:
         - name: alumnoId
           in: path

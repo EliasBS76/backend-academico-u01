@@ -97,3 +97,11 @@ Authorization: Basic admin admin123
 ### U12: contador de la tarea programada (aparece después del primer minuto)
 GET http://localhost:8080/actuator/metrics/academico.resumen.ejecuciones
 Authorization: Basic admin admin123
+
+### Reto U12: un ALUMNO ve sólo su propio historial (sustituye el id por el de A001)
+GET http://localhost:8080/api/v1/inscripciones/alumno/1
+Authorization: Basic alumno alumno123
+
+### Reto U12: historial ajeno -> 403 ACCESO_DENEGADO
+GET http://localhost:8080/api/v1/inscripciones/alumno/2
+Authorization: Basic alumno alumno123

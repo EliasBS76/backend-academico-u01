@@ -28,6 +28,8 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/v1/alumnos/**").hasAnyRole("ALUMNO", "DOCENTE", "ADMIN")
             // Reto U10: la ruta sólo exige identidad; la regla por objeto la aplica ExpedienteService.
             .requestMatchers(HttpMethod.GET, "/api/v1/expediente", "/api/v1/expedientes/**").authenticated()
+            // Reto U12: el historial admite ALUMNO; la regla por propietario la aplica el servicio.
+            .requestMatchers(HttpMethod.GET, "/api/v1/inscripciones/alumno/**").hasAnyRole("ALUMNO", "DOCENTE", "ADMIN")
             .requestMatchers("/api/v1/**").hasAnyRole("DOCENTE", "ADMIN")
             .anyRequest().denyAll());
         // 3. Basic autentica credenciales; TLS protege su transporte fuera de localhost.

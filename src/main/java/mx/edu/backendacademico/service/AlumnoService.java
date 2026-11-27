@@ -9,6 +9,7 @@ import mx.edu.backendacademico.exception.MatriculaDuplicadaException;
 import mx.edu.backendacademico.repository.AlumnoRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,9 @@ public class AlumnoService {
         return repository.buscarPorId(id).orElseThrow(() -> new AlumnoNoEncontradoException(id));
     }
 
-    @CacheEvict(cacheNames = {"alumnos", "alumnosLista"}, allEntries = true)
+    // Reto U12: crear sólo invalida la lista. Un id nuevo no puede estar en "alumnos"
+    // porque una búsqueda fallida (404) lanza excepción y no se guarda en la caché.
+    @CacheEvict(cacheNames = "alumnosLista", allEntries = true)
     @Transactional
     public Alumno crear(String matricula, String nombre, String correo) {
         // Esta comprobación mejora el mensaje; el almacén vuelve a proteger unicidad.
@@ -43,7 +46,10 @@ public class AlumnoService {
         return repository.guardar(new Alumno(null, matricula, nombre, correo, EstatusAlumno.ACTIVO));
     }
 
-    @CacheEvict(cacheNames = {"alumnos", "alumnosLista"}, allEntries = true)
+    // Reto U12: invalida sólo la entrada del alumno modificado y la lista, no la caché completa.
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "alumnos", key = "#id"),
+        @CacheEvict(cacheNames = "alumnosLista", allEntries = true)})
     @Transactional
     public Alumno actualizar(Long id, String nombre, String correo) {
         // Recupera el estado actual y conserva identidad, matrícula y estatus.
@@ -51,7 +57,10 @@ public class AlumnoService {
         return repository.guardar(new Alumno(id, actual.matricula(), nombre, correo, actual.estatus()));
     }
 
-    @CacheEvict(cacheNames = {"alumnos", "alumnosLista"}, allEntries = true)
+    // Reto U12: invalida sólo la entrada del alumno modificado y la lista, no la caché completa.
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "alumnos", key = "#id"),
+        @CacheEvict(cacheNames = "alumnosLista", allEntries = true)})
     @Transactional
     public void eliminar(Long id) {
         // Si no existe, comunica ausencia antes de solicitar la eliminación.

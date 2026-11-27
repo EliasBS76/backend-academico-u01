@@ -22,6 +22,8 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/academico
       DB_USER: academico
       DB_PASSWORD: academico
+      # Reto U12: SQL_LOG=DEBUG muestra cada SELECT y permite ver los aciertos de caché.
+      LOGGING_LEVEL_ORG_HIBERNATE_SQL: ${SQL_LOG:-INFO}
     depends_on:
       postgres:
         condition: service_healthy
