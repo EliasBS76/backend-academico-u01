@@ -36,6 +36,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problema(HttpStatus.NOT_FOUND, "EXPEDIENTE_NO_ASOCIADO", ex.getMessage());
     }
 
+    // Reto U11: misma clave con otro contenido. 422 porque la sintaxis es válida
+    // pero la petición contradice lo que ya se hizo con esa clave.
+    @ExceptionHandler(ContenidoIdempotenteDistintoException.class)
+    ProblemDetail contenidoDistinto(ContenidoIdempotenteDistintoException ex) {
+        return problema(HttpStatus.UNPROCESSABLE_CONTENT, "IDEMPOTENCIA_CONTENIDO_DISTINTO", ex.getMessage());
+    }
+
+    @ExceptionHandler(ClaveIdempotenciaInvalidaException.class)
+    ProblemDetail claveInvalida(ClaveIdempotenciaInvalidaException ex) {
+        return problema(HttpStatus.BAD_REQUEST, "CLAVE_IDEMPOTENCIA_INVALIDA", ex.getMessage());
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers,
